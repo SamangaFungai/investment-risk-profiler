@@ -32,17 +32,18 @@ st.markdown(
     """
     <style>
     .dev-watermark {
-        position: fixed;
-        top: 8px;
+        position: fixed !important;
+        top: 46px;
         right: 12px;
-        z-index: 9999;
+        z-index: 2147483647 !important;
         font-size: 0.75rem;
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.9);
         padding: 2px 8px;
         border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
     .dev-watermark a {
-        color: rgba(90, 90, 90, 0.85);
+        color: rgba(60, 60, 60, 0.95);
         text-decoration: none;
     }
     .dev-watermark a:hover {
