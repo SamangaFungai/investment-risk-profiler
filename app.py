@@ -36,14 +36,16 @@ st.markdown(
         top: 46px;
         right: 12px;
         z-index: 2147483647 !important;
-        font-size: 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #d32f2f;
         background: rgba(255, 255, 255, 0.9);
-        padding: 2px 8px;
+        padding: 3px 10px;
         border-radius: 6px;
         box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
     .dev-watermark a {
-        color: rgba(60, 60, 60, 0.95);
+        color: #d32f2f;
         text-decoration: none;
     }
     .dev-watermark a:hover {
