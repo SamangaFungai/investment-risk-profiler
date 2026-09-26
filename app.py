@@ -19,7 +19,6 @@ import pandas as pd
 import streamlit as st
 
 import auth
-import billing
 
 MODEL_PATH = "model.pkl"
 
@@ -59,8 +58,6 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 if "username" not in st.session_state:
     st.session_state.username = None
-if "subscription_active" not in st.session_state:
-    st.session_state.subscription_active = None  # None = not checked yet
 
 
 def show_login_page():
@@ -112,58 +109,11 @@ if not st.session_state.authenticated:
     show_login_page()
     st.stop()
 
-# --- Handle returning from Stripe Checkout -------------------------------
-# When Stripe redirects back after a successful payment, the URL contains
-# ?session_id=... . We verify it and attach the resulting Stripe customer
-# to this user's account.
-query_session_id = st.query_params.get("session_id")
-if query_session_id:
-    returned_username, customer_id = billing.verify_checkout_session(query_session_id)
-    if returned_username and customer_id:
-        auth.set_stripe_customer_id(returned_username, customer_id)
-        st.session_state.subscription_active = True
-        st.query_params.clear()
-        st.rerun()
-
-# --- Check subscription status --------------------------------------------
-if st.session_state.subscription_active is None:
-    customer_id = auth.get_stripe_customer_id(st.session_state.username)
-    st.session_state.subscription_active = billing.has_active_subscription(customer_id)
-
-
-def show_subscribe_page():
-    st.title("📊 Investment Risk Profiler")
-    st.subheader("Subscribe to continue")
-    st.write(
-        "This app requires an active subscription. Subscribe below to get "
-        "unlimited real-time risk profile predictions."
-    )
-    if st.button("Subscribe Now", type="primary", use_container_width=True):
-        checkout_url = billing.create_checkout_session(st.session_state.username)
-        st.link_button(
-            "Continue to secure checkout →", checkout_url, use_container_width=True
-        )
-    if st.button("Log Out", use_container_width=True):
-        st.session_state.authenticated = False
-        st.session_state.username = None
-        st.session_state.subscription_active = None
-        st.rerun()
-
-
-if not st.session_state.subscription_active:
-    show_subscribe_page()
-    st.stop()
-
 with st.sidebar:
     st.write(f"Logged in as **{st.session_state.username}**")
-    customer_id = auth.get_stripe_customer_id(st.session_state.username)
-    if customer_id and st.button("Manage Billing", use_container_width=True):
-        portal_url = billing.create_billing_portal_session(customer_id)
-        st.link_button("Open Billing Portal →", portal_url, use_container_width=True)
     if st.button("Log Out", use_container_width=True):
         st.session_state.authenticated = False
         st.session_state.username = None
-        st.session_state.subscription_active = None
         st.rerun()
 
 
